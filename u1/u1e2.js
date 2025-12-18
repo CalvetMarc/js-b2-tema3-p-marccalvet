@@ -74,3 +74,52 @@ const PROJECT_LIST = [
 ];
 
 //Escribe aquí tu solución / escriviu aquí la vostra solució:
+function renderProjects(){
+    const list = document.querySelector(".js-project-list");
+    const projectTemplate = document.getElementById("tpl-project").content;
+    const tagTemplate = document.getElementById("tpl-tag").content;
+    const fragment = document.createDocumentFragment()
+    
+    PROJECT_LIST.forEach((project) => {
+        const clone = projectTemplate.cloneNode(true);
+        const projectNode = clone.querySelector(".js-project");
+        
+        projectNode.dataset.id = project.id;
+        projectNode.dataset.tags = project.tags.join(",");
+        projectNode.dataset.search = project.search.join(",");
+        projectNode.dataset.archived = project.archived;
+
+        if (project.archived) {
+            projectNode.classList.add("archived");
+        }
+        if (project.progress === 100) {
+            projectNode.classList.add("completed");
+        }
+
+        projectNode.querySelector(".js-name").textContent = project.name;
+        projectNode.querySelector(".js-progress").textContent = project.progress;
+        projectNode.querySelector(".js-excerpt").innerHTML = project.excerpt;
+
+        const category = CATEGORY_LIST.find(
+            cat => cat.id === project.categoryId
+        );
+        projectNode.querySelector(".js-category").textContent = category.name;
+
+        const tagsContainer = projectNode.querySelector(".js-tags");
+        project.tags.forEach(tag => {
+            const tagClone = tagTemplate.cloneNode(true);
+            const tagLink = tagClone.querySelector(".js-tag-link");
+
+            tagLink.dataset.tag = tag;
+            tagLink.textContent = tag;
+
+            tagsContainer.appendChild(tagClone);
+        });
+
+        fragment.appendChild(clone);
+    });
+
+    list.appendChild(fragment);
+}
+
+renderProjects();
